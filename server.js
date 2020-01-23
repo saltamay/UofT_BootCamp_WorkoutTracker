@@ -32,10 +32,20 @@ app.get('/stats', (req, res) => {
   res.sendFile(path.join(__dirname + '/public/stats.html'));
 });
 
+app.get('/api/workouts', async (req, res) => {
+  try {
+    const workouts = await db.Workout.find();
+    res.status(200).send(workouts);
+  } catch (error) {
+    res.status(400).json({
+      success: false
+    });
+  }
+});
+
 app.get('/api/workouts/range', async (req, res) => {
   try {
     const workouts = await db.Workout.find();
-    console.log(workouts);
     res.status(200).send(workouts);
   } catch (error) {
     res.status(400).json({
