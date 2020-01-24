@@ -24,6 +24,10 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname + '/public/index.html'));
+});
+
 app.get('/exercise', (req, res) => {
   res.sendFile(path.join(__dirname + '/public/exercise.html'));
 });
@@ -36,6 +40,17 @@ app.get('/api/workouts', async (req, res) => {
   try {
     const workouts = await db.Workout.find();
     res.status(200).send(workouts);
+  } catch (error) {
+    res.status(400).json({
+      success: false
+    });
+  }
+});
+
+app.post('/api/workouts', async (req, res) => {
+  const workout = req.body;
+  try {
+    await db.Workout.workouts.insert(workout);
   } catch (error) {
     res.status(400).json({
       success: false
