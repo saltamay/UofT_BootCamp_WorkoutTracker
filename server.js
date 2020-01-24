@@ -43,6 +43,20 @@ app.get('/api/workouts', async (req, res) => {
   }
 });
 
+app.put('/api/workouts/:id', async (req, res) => {
+  const id = req.params.id;
+  const data = req.body;
+  const workout = await db.Workout.findById(id);
+
+  if (workout) {
+    workout.exercises.push(data);
+    await db.Workout.updateOne({ _id: id }, workout, { upsert: true });
+    return res.status(200).json({
+      success: true
+    });
+  }
+});
+
 app.get('/api/workouts/range', async (req, res) => {
   try {
     const workouts = await db.Workout.find();
