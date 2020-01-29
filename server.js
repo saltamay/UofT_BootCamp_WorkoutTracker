@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-// const Workout = require('./models/workout');
+const Workout = require('./models/workout');
 
 let mongoose = require('mongoose');
 let db = require('./models');
@@ -37,50 +37,61 @@ app.get('/stats', (req, res) => {
 });
 
 app.get('/api/workouts', async (req, res) => {
-  try {
-    const workouts = await db.Workout.find();
-    res.status(200).send(workouts);
-  } catch (error) {
-    res.status(400).json({
-      success: false
+  Workout.find({})
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
     });
-  }
 });
 
 app.post('/api/workouts', async (req, res) => {
-  const workout = req.body;
-  try {
-    await db.Workout.workouts.insert(workout);
-  } catch (error) {
-    res.status(400).json({
-      success: false
+  const workout = new Workout({ exercises: req.body });
+  Workout.create(workout)
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
     });
-  }
 });
 
 app.put('/api/workouts/:id', async (req, res) => {
   const id = req.params.id;
   const data = req.body;
-  const workout = await db.Workout.findById(id);
 
-  if (workout) {
-    workout.exercises.push(data);
-    await db.Workout.updateOne({ _id: id }, workout, { upsert: true });
-    return res.status(200).json({
-      success: true
+  Workout.findById(id)
+    .then(dbWorkout => {
+      dbWorkout.exercises.push(data);
+      return dbWorkout;
+    })
+    .then(dbWorkout => {
+      Workout.findOneAndUpdate(
+        { _id: id },
+        { exercises: dbWorkout.exercises },
+        { new: true }
+      )
+        .then(dbWorkout => {
+          res.json(dbWorkout);
+        })
+        .catch(err => {
+          res.json(err);
+        });
+    })
+    .catch(err => {
+      res.json(err);
     });
-  }
 });
 
 app.get('/api/workouts/range', async (req, res) => {
-  try {
-    const workouts = await db.Workout.find();
-    res.status(200).send(workouts);
-  } catch (error) {
-    res.status(400).json({
-      success: false
+  Workout.find({})
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
     });
-  }
 });
 
 app.listen(PORT, function() {

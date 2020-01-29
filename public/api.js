@@ -2,7 +2,6 @@ const API = {
   async getLastWorkout() {
     const res = await fetch('/api/workouts');
     const json = await res.json();
-
     return json[json.length - 1];
   },
   async addExercise(data) {
