@@ -6,10 +6,13 @@ const Workout = require('./models/workout');
 let mongoose = require('mongoose');
 let db = require('./models');
 
-mongoose.connect('mongodb://localhost/workout', {
-  useNewUrlParser: true,
-  useFindAndModify: false
-});
+mongoose.connect(
+  'mongodb://saltamay:123admin@ds161823.mlab.com:61823/heroku_hg9tjfjl',
+  {
+    useNewUrlParser: true,
+    useFindAndModify: false
+  }
+);
 
 const PORT = process.env.PORT || 3000;
 
